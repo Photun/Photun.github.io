@@ -9,29 +9,29 @@
   <div style="max-width: 600px; margin: 50px auto; padding: 30px; background: white; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
     <h1 style="text-align: center; color: #333;">Contact Support</h1>
     <p style="text-align: center; color: #666; font-size: 14px;">
-      Having trouble? Fill out the form below and we’ll get back to you as soon as possible.
+      Having trouble? Fill out the form below and your email client will open with the details pre-filled.
     </p>
 
-    <form action="mailto:bcliu09@gmail.com" method="post" enctype="text/plain" style="display: flex; flex-direction: column; gap: 15px; margin-top: 20px;">
+    <form id="supportForm" style="display: flex; flex-direction: column; gap: 15px; margin-top: 20px;" onsubmit="sendEmail(event)">
       
       <label style="font-size: 14px; color: #333;">
         Your Name:
-        <input type="text" name="Name" required style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px;">
+        <input type="text" id="name" required style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px;">
       </label>
       
       <label style="font-size: 14px; color: #333;">
         Your Email:
-        <input type="email" name="Email" required style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px;">
+        <input type="email" id="email" required style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px;">
       </label>
       
       <label style="font-size: 14px; color: #333;">
         Subject:
-        <input type="text" name="Subject" required style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px;">
+        <input type="text" id="subject" required style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px;">
       </label>
       
       <label style="font-size: 14px; color: #333;">
         Message:
-        <textarea name="Message" rows="6" required style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px; resize: vertical;"></textarea>
+        <textarea id="message" rows="6" required style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px; resize: vertical;"></textarea>
       </label>
 
       <button type="submit" style="background-color: #007BFF; color: white; padding: 12px; border: none; border-radius: 5px; font-size: 16px; cursor: pointer;">
@@ -43,6 +43,19 @@
       We typically respond within 24–48 hours.
     </p>
   </div>
+
+  <script>
+    function sendEmail(event) {
+      event.preventDefault();
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+      const subject = document.getElementById("subject").value;
+      const message = document.getElementById("message").value;
+
+      const body = `Name: ${name}%0D%0AEmail: ${email}%0D%0A%0D%0A${message}`;
+      window.location.href = `mailto:bcliu09@gmail.com?subject=${encodeURIComponent(subject)}&body=${body}`;
+    }
+  </script>
 
 </body>
 </html>
