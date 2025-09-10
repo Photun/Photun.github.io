@@ -1,61 +1,28 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Support Page</title>
+  <title>NoteLink Support</title>
 </head>
 <body style="font-family: Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 0;">
 
-  <div style="max-width: 600px; margin: 50px auto; padding: 30px; background: white; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
-    <h1 style="text-align: center; color: #333;">Contact Support</h1>
-    <p style="text-align: center; color: #666; font-size: 14px;">
-      Having trouble? Fill out the form below and your email client will open with the details pre-filled.
+  <div style="max-width: 600px; margin: 80px auto; padding: 40px; background: #fff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); text-align: center;">
+    
+    <h1 style="color: #d9534f; margin-bottom: 20px;">Delete Your Account</h1>
+    
+    <p style="color: #555; font-size: 16px; line-height: 1.6; margin-bottom: 30px;">
+      Click the button below to contact support.  
+      Your email client will open with the request prefilled.
     </p>
+    
+    <a href="mailto:bcliu09@gmail.com?subject=NoteLink%20Support%20"
+       style="display: inline-block; background-color: #d9534f; color: white; padding: 14px 24px; text-decoration: none; font-size: 16px; font-weight: bold; border-radius: 8px; transition: background-color 0.2s;">
+      Request Account Deletion
+    </a>
 
-    <form id="supportForm" style="display: flex; flex-direction: column; gap: 15px; margin-top: 20px;" onsubmit="sendEmail(event)">
-      
-      <label style="font-size: 14px; color: #333;">
-        Your Name:
-        <input type="text" id="name" required style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px;">
-      </label>
-      
-      <label style="font-size: 14px; color: #333;">
-        Your Email:
-        <input type="email" id="email" required style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px;">
-      </label>
-      
-      <label style="font-size: 14px; color: #333;">
-        Subject:
-        <input type="text" id="subject" required style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px;">
-      </label>
-      
-      <label style="font-size: 14px; color: #333;">
-        Message:
-        <textarea id="message" rows="6" required style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px; resize: vertical;"></textarea>
-      </label>
-
-      <button type="submit" style="background-color: #007BFF; color: white; padding: 12px; border: none; border-radius: 5px; font-size: 16px; cursor: pointer;">
-        Submit
-      </button>
-    </form>
-
-    <p style="text-align: center; color: #999; font-size: 12px; margin-top: 20px;">
-      We typically respond within 24–48 hours.
+    <p style="margin-top: 20px; color: #999; font-size: 13px;">
+      Responses usually take less than 24 hours.
     </p>
   </div>
-
-  <script>
-    function sendEmail(event) {
-      event.preventDefault();
-      const name = document.getElementById("name").value;
-      const email = document.getElementById("email").value;
-      const subject = document.getElementById("subject").value;
-      const message = document.getElementById("message").value;
-
-      const body = `Name: ${name}%0D%0AEmail: ${email}%0D%0A%0D%0A${message}`;
-      window.location.href = `mailto:bcliu09@gmail.com?subject=${encodeURIComponent(subject)}&body=${body}`;
-    }
-  </script>
 
 </body>
 </html>
