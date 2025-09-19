@@ -1,0 +1,44 @@
+/* Updated styles: cleaner layout and spacing */
+:root{ --bg:#f6f8fb; --card:#fff; --accent:#1f6feb; --muted:#6b7280; --radius:
+12px; }
+*{ box-sizing:border-box; }
+body{ font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial;
+background:var(--bg); margin:0; color:#111;}
+.topbar{ background:linear-gradient(90deg,var(--accent), #2a83ff); color:#fff;
+padding:12px 18px; display:flex; justify-content:space-between; alignitems:center;}
+.topbar h1{ margin:0; font-size:1.15rem; }
+.nav .navlink{ color:rgba(255,255,255,0.9); margin-left:12px; textdecoration:none; }
+.container{ max-width:980px; margin:28px auto; padding:0 16px; }
+.card{ background:var(--card); border-radius:var(--radius); padding:18px; boxshadow:0 8px 30px rgba(12,18,30,0.06); margin-bottom:16px; }
+.formRow label{ display:block; margin-bottom:8px; }
+.btn{ background:var(--accent); color:white; border:none; padding:8px 12px;
+border-radius:10px; cursor:pointer; }
+.btn.ghost{ background:transparent; border:1px solid rgba(0,0,0,0.06);
+color:var(--accent); }
+.btn.small{ padding:6px 8px; font-size:0.9rem; }
+12
+.btn.tiny{ padding:6px 8px; font-size:0.85rem; margin-left:8px; }
+.row{ display:flex; gap:10px; align-items:center; }
+.spaceBetween{ justify-content:space-between; }
+input[type=text], input[type=email], input[type=password]{ padding:10px; borderradius:10px; border:1px solid #e6eefc; width:100%; }
+.hidden{ display:none; }
+.list{ list-style:none; padding:0; margin:10px 0; }
+.bandItem{ padding:12px; border-radius:10px; background:#fbfdff; display:flex;
+justify-content:space-between; align-items:center; margin-bottom:8px; }
+.memberItem{ padding:10px; border-radius:10px; background:#fbfdff;
+display:flex; justify-content:space-between; align-items:center; margin-bottom:
+8px; }
+.muted{ color:var(--muted); }
+.bold{ font-weight:600; }
+.drumMajorDisplay{ font-size:0.95rem; color:#fff; background:rgba(0,0,0,0.08);
+padding:6px 10px; border-radius:10px; }
+.switch{ position:relative; display:inline-block; width:46px; height:26px; }
+.switch input{ opacity:0; width:0; height:0; }
+.slider{ position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0;
+background:#ccc; border-radius:26px; }
+.slider:before{ position:absolute; content:""; height:20px; width:20px; left:
+3px; bottom:3px; background:white; border-radius:50%; transition: .2s; }
+.switch input:checked + .slider{ background:var(--accent); }
+.switch input:checked + .slider:before{ transform: translateX(20px); }
+.note{ font-size:0.9rem; color:var(--muted); }
+.info{ margin-top:8px; color:var(--muted); }
