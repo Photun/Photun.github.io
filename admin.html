@@ -3,59 +3,78 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>PepTunes Admin — Dashboard</title>
+<title>PepTunes — Admin Dashboard</title>
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 <header class="topbar">
-<h1>PepTunes — Admin Dashboard</h1>
+<h1>PepTunes — Admin</h1>
 <div id="userControls"></div>
 </header>
 
 
 <main class="container">
-<div id="authBox" class="card">
-<h2>Admin sign in</h2>
-<form id="loginForm">
-<label>Email<input id="email" type="email" required></label>
-<label>Password<input id="password" type="password" required></label>
+<div id="authArea" class="card">
+<h2 id="authTitle">Sign in / Sign up</h2>
+<form id="loginForm" class="formRow">
+<label class="stack">Email
+<input id="email" type="email" required />
+</label>
+<label class="stack">Password
+<input id="password" type="password" required />
+</label>
 <div class="row">
-<button class="btn" id="signIn">Sign In</button>
-<button class="btn ghost" id="signUp">Create Admin Account</button>
+<button id="signIn" class="btn">Sign In</button>
+<button id="signUp" class="btn ghost">Create account</button>
 </div>
-<div class="info" id="authMsg"></div>
+<div id="authMsg" class="info"></div>
 </form>
 </div>
 
 
 <div id="dashboard" class="hidden">
 <section class="card">
+<div class="row spaceBetween">
 <h2>My Bands</h2>
-<div id="createBandRow">
-<input id="newBandName" placeholder="Band name (e.g. West HS Pep)"/>
+<div class="drumMajorDisplay">Drum Major: <span id="globalDrumMajor" class="bold muted">—</span></div>
+</div>
+
+
+<div id="createBandRow" class="row">
+<input id="newBandName" placeholder="Band name (e.g. West HS Pep)" />
 <button id="createBandBtn" class="btn">Create Band</button>
 </div>
-<ul id="bandsList"></ul>
+
+
+<ul id="bandsList" class="list"></ul>
 </section>
 
 
 <section id="bandEditor" class="card hidden">
-<h2 id="bandTitle">Band: </h2>
-<p>Join code: <strong id="bandJoinCode"></strong> &nbsp; Secret name: <input id="secretNameInput" /> <button id="saveSecret" class="btn small">Save</button></p>
+<div class="row spaceBetween">
+<h2 id="bandTitle">Band</h2>
+<div>
+<button id="deleteBand" class="btn ghost">Delete Band</button>
+</div>
+</div>
+
+
+<p>Join code: <strong id="bandJoinCode"></strong> <button id="regenJoin" class="btn small">Regenerate</button></p>
+<p>Secret name: <input id="secretNameInput" /> <button id="saveSecret" class="btn small">Save</button></p>
 <p>Session active: <label class="switch"><input id="sessionToggle" type="checkbox"><span class="slider"></span></label></p>
+
+
 <h3>Members</h3>
-<ul id="membersList"></ul>
-<div class="note">To set a drum major, click a member's "Set Drum Major" button. The UI shows names (mapping to their uid).</div>
+<ul id="membersList" class="list"></ul>
+<p class="note">Click "Set Drum Major" next to a member to set them. The UI displays names to make selection friendly.</p>
 </section>
 </div>
 
 
-<div id="adminOnlyMsg" class="card hidden">
-<h3>Not an admin</h3>
-<p>Your account is not marked as an admin. Add your uid under <code>/admins/&lt;uid&gt;: true</code> in the RTDB or ask the project owner to grant admin access.</p>
+<div id="notSignedInMsg" class="card hidden">
+<h3>Not signed in</h3>
+<p>Please sign in or create an account to use the portal.</p>
 </div>
-
-
 </main>
 
 
