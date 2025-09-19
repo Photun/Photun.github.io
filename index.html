@@ -8,31 +8,34 @@
 </head>
 <body>
 <header class="topbar">
-<h1>PepTunes — Admin Portal</h1>
+<h1>PepTunes</h1>
+<nav class="nav">
+<a class="navlink" href="admin.html">Admin Portal</a>
+<a class="navlink" href="/">Docs</a>
+</nav>
 </header>
 
 
 <main class="container">
-<section class="hero">
-<h2>Admin management for your band</h2>
-<p>Create bands, manage members, set the drum major, and view join codes. Works with the app's existing RTDB schema.</p>
-<div class="cta-row">
-<a class="btn" href="admin.html">Open Admin Portal</a>
-</div>
+<section class="hero card">
+<h2>Admin portal for PepTunes</h2>
+<p>Create bands, manage members, assign a drum major, and generate join codes for your players. This portal writes directly to the app's Realtime Database.</p>
+<p><a class="btn" href="admin.html">Open Admin Portal</a></p>
 </section>
 
 
-<section class="help">
-<h3>Quick start</h3>
+<section class="card">
+<h3>How it works</h3>
 <ol>
-<li>Open the admin portal.</li>
-<li>Log in with your admin email/password (enable Email/Password in Firebase).</li>
-<li>Create a band and copy the join code to share with members.</li>
+<li>Open Admin Portal and sign up with email/password.</li>
+<li>Create a band — this creates `/bands/<id>` in RTDB with `createdBy` set to your uid.</li>
+<li>Share the join code with members. When they join in the app, they'll be listed under `/users` with `bandId` set.</li>
+<li>In the portal click a member's "Set Drum Major" button to set the drum major (mapped by uid).</li>
 </ol>
 </section>
 </main>
 
 
-<footer class="footer">PepTunes Admin — client-only demo</footer>
+<footer class="footer">PepTunes • Admin Portal</footer>
 </body>
 </html>
