@@ -1,28 +1,52 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-  <title>Request Account Deletion</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Request deletion of a NoteLink account.">
+  <title>Delete Your NoteLink Account</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
-<body style="font-family: Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 0;">
-
-  <div style="max-width: 600px; margin: 80px auto; padding: 40px; background: #fff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); text-align: center;">
-    
-    <h1 style="color: #d9534f; margin-bottom: 20px;">Delete Your Account</h1>
-    
-    <p style="color: #555; font-size: 16px; line-height: 1.6; margin-bottom: 30px;">
-      Click the button below to request account deletion.  
-      Your email client will open with the request prefilled.
-    </p>
-    
-    <a href="mailto:bcliu09@gmail.com?subject=Account%20Deletion%20Request&body=Hello,%0AI%20would%20like%20to%20delete%20my%20account.%0AName%20and%20instrument:"
-       style="display: inline-block; background-color: #d9534f; color: white; padding: 14px 24px; text-decoration: none; font-size: 16px; font-weight: bold; border-radius: 8px; transition: background-color 0.2s;">
-      Request Account Deletion
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="NoteLink home">
+      <img src="assets/notelink-icon.png" alt="" class="brand-icon">
+      <span>NoteLink</span>
     </a>
+    <nav class="site-nav" aria-label="Main navigation">
+      <a href="index.html#request">Request a band</a>
+      <a href="support.html">Support</a>
+      <a href="privacy.html">Privacy</a>
+    </nav>
+  </header>
 
-    <p style="margin-top: 20px; color: #999; font-size: 13px;">
-      Once submitted, your account deletion request cannot be undone.
-    </p>
-  </div>
+  <main class="page">
+    <section class="page-card">
+      <p class="eyebrow">Account deletion</p>
+      <h1>Request account deletion.</h1>
+      <p>
+        NoteLink uses anonymous app accounts. To help us find the correct account, include the name and instrument shown in your app settings, plus your band name or join code if you know it.
+      </p>
+      <a class="button danger" href="mailto:bcliu09@gmail.com?subject=NoteLink%20Account%20Deletion%20Request&body=Hello,%0A%0AI%20would%20like%20to%20delete%20my%20NoteLink%20account.%0A%0AName%20in%20app:%0AInstrument:%0ABand%20name%20or%20join%20code:%0AAny%20other%20details:%0A">
+        Email deletion request
+      </a>
+    </section>
 
+    <section class="page-card muted-card">
+      <h2>What will be deleted?</h2>
+      <p>
+        Account deletion removes the app profile associated with the matching NoteLink account, including stored name, instrument, preferred part, and band membership. Music files and band-wide content are not deleted unless separately requested by a band owner or administrator.
+      </p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <span>NoteLink</span>
+    <nav aria-label="Footer navigation">
+      <a href="index.html">Home</a>
+      <a href="support.html">Support</a>
+      <a href="privacy.html">Privacy</a>
+    </nav>
+  </footer>
 </body>
 </html>
