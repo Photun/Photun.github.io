@@ -176,6 +176,12 @@ h3 {
   cursor: pointer;
 }
 
+.button:disabled {
+  cursor: progress;
+  filter: grayscale(0.35);
+  opacity: 0.7;
+}
+
 .button.primary {
   background: linear-gradient(135deg, var(--blue), var(--teal));
   box-shadow: 0 16px 34px rgba(7, 211, 205, 0.18);
@@ -395,6 +401,26 @@ textarea:focus {
   margin: 0;
   color: var(--faint);
   font-size: 0.9rem;
+}
+
+.form-status {
+  min-height: 22px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.94rem;
+  font-weight: 750;
+}
+
+.form-status:empty {
+  display: none;
+}
+
+.form-status[data-kind="success"] {
+  color: #63d17a;
+}
+
+.form-status[data-kind="error"] {
+  color: #ff8c8c;
 }
 
 .page,
