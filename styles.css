@@ -92,6 +92,21 @@ a {
   color: var(--text);
 }
 
+.site-nav .nav-director-link {
+  margin-left: 8px;
+  padding: 9px 14px;
+  border: 1px solid rgba(7, 211, 205, 0.32);
+  border-radius: 999px;
+  background: rgba(7, 211, 205, 0.1);
+  color: var(--text);
+  box-shadow: 0 10px 28px rgba(7, 211, 205, 0.1);
+}
+
+.site-nav .nav-director-link:hover {
+  border-color: rgba(7, 211, 205, 0.7);
+  background: rgba(7, 211, 205, 0.18);
+}
+
 .hero {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(320px, 0.82fr);
@@ -696,6 +711,175 @@ select:focus {
   color: var(--text);
 }
 
+.director-login-body,
+.director-portal-body {
+  min-height: 100vh;
+  background:
+    linear-gradient(120deg, rgba(14, 29, 54, 0.58), transparent 42%),
+    radial-gradient(circle at 85% 16%, rgba(7, 211, 205, 0.12), transparent 24rem),
+    #020409;
+}
+
+.director-login-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 22px clamp(22px, 5vw, 70px);
+}
+
+.director-exit-link {
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 0.92rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.director-exit-link:hover {
+  color: var(--text);
+}
+
+.director-login-page {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(340px, 440px);
+  gap: clamp(26px, 6vw, 76px);
+  align-items: center;
+  min-height: calc(100vh - 86px);
+  padding: clamp(28px, 6vw, 80px) clamp(22px, 7vw, 96px);
+}
+
+.director-login-copy {
+  max-width: 720px;
+}
+
+.director-login-copy h1 {
+  margin-bottom: 18px;
+  font-size: clamp(3.7rem, 9vw, 8rem);
+}
+
+.director-login-copy p:not(.eyebrow) {
+  max-width: 620px;
+  color: var(--muted);
+  font-size: clamp(1.04rem, 1.8vw, 1.22rem);
+}
+
+.director-login-card {
+  display: grid;
+  gap: 16px;
+  padding: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 14px;
+  background: rgba(10, 15, 24, 0.88);
+  box-shadow: var(--shadow);
+}
+
+.director-login-card h2 {
+  margin-bottom: 0;
+  font-size: clamp(1.7rem, 3vw, 2.45rem);
+}
+
+.director-login-card label {
+  display: grid;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 0.92rem;
+  font-weight: 800;
+}
+
+.director-portal {
+  min-height: 100vh;
+}
+
+.portal-shell-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 14px clamp(18px, 4vw, 44px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(2, 4, 9, 0.9);
+  backdrop-filter: blur(18px);
+}
+
+.portal-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  color: var(--text);
+  font-weight: 850;
+  text-decoration: none;
+}
+
+.portal-topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.portal-email {
+  max-width: 34vw;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 750;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.portal-loading,
+.portal-content {
+  padding: 28px clamp(18px, 4vw, 44px) 54px;
+}
+
+.portal-loading {
+  display: grid;
+  place-content: center start;
+  min-height: calc(100vh - 68px);
+}
+
+.portal-loading h1 {
+  margin-bottom: 12px;
+  font-size: clamp(2.5rem, 6vw, 5.7rem);
+}
+
+.portal-content {
+  display: grid;
+  gap: 18px;
+}
+
+.portal-hero-row {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.portal-hero-row h1 {
+  margin-bottom: 0;
+  font-size: clamp(2.3rem, 5vw, 5rem);
+}
+
+.portal-band-switcher {
+  display: grid;
+  gap: 7px;
+  min-width: min(320px, 100%);
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.director-portal-body .portal-card {
+  border-radius: 12px;
+  background: rgba(13, 18, 27, 0.94);
+}
+
 @media (max-width: 880px) {
   .site-header,
   .site-footer {
@@ -705,6 +889,7 @@ select:focus {
 
   .hero,
   .request-section,
+  .director-login-page,
   .director-auth,
   .portal-grid {
     grid-template-columns: minmax(0, 1fr);
@@ -741,6 +926,16 @@ select:focus {
   .request-copy {
     position: static;
   }
+
+  .director-login-page {
+    align-items: start;
+    min-height: auto;
+  }
+
+  .portal-hero-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
 }
 
 @media (max-width: 620px) {
@@ -759,7 +954,10 @@ select:focus {
   .section,
   .page,
   .legal,
-  .director-page {
+  .director-page,
+  .director-login-page,
+  .portal-loading,
+  .portal-content {
     padding-left: 30px;
     padding-right: 30px;
   }
@@ -778,9 +976,15 @@ select:focus {
 
   .portal-topbar,
   .portal-record,
-  .member-row {
+  .member-row,
+  .portal-shell-topbar,
+  .portal-topbar-actions {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .portal-email {
+    max-width: calc(100vw - 60px);
   }
 
   .screen {

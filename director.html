@@ -3,191 +3,42 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Sign in to manage your private NoteLink band library.">
+  <meta name="description" content="Sign in to the private NoteLink director portal.">
   <title>Director Sign In | NoteLink</title>
   <link rel="icon" href="assets/notelink-icon.png">
   <link rel="stylesheet" href="styles.css">
 </head>
-<body>
-  <header class="site-header">
+<body class="director-login-body">
+  <header class="director-login-header">
     <a class="brand" href="index.html" aria-label="NoteLink home">
       <img src="assets/notelink-icon.png" alt="" class="brand-icon">
       <span>NoteLink</span>
     </a>
-    <nav class="site-nav" aria-label="Main navigation">
-      <a href="index.html#request">Request a band</a>
-      <a href="director.html" aria-current="page">Director sign in</a>
-      <a href="support.html">Support</a>
-      <a href="privacy.html">Privacy</a>
-    </nav>
+    <a class="director-exit-link" href="index.html">Public site</a>
   </header>
 
-  <main class="director-page">
-    <section id="director-auth" class="director-auth">
+  <main class="director-login-page">
+    <section class="director-login-copy">
+      <p class="eyebrow">Director access</p>
+      <h1>Private band control.</h1>
+      <p>
+        Sign in with the email attached to your NoteLink band. The portal opens separately from the public site so your library tools stay focused.
+      </p>
+    </section>
+
+    <form id="director-login-form" class="director-login-card">
       <div>
-        <p class="eyebrow">Director portal</p>
-        <h1>Manage your band library.</h1>
-        <p class="hero-text">
-          Use the email attached to your NoteLink band to upload private music, create shorties, and check your members.
-        </p>
+        <p class="eyebrow">Secure link</p>
+        <h2>Enter your director email.</h2>
       </div>
-
-      <form id="director-login-form" class="portal-card">
-        <label>
-          Director email
-          <input id="director-email" type="email" autocomplete="email" required>
-        </label>
-        <button id="send-code-button" class="button primary" type="submit">Send sign-in link</button>
-        <p id="director-auth-status" class="form-status" role="status" aria-live="polite"></p>
-      </form>
-    </section>
-
-    <section id="director-app" class="director-app" hidden>
-      <div class="portal-topbar">
-        <div>
-          <p class="eyebrow">Signed in</p>
-          <h1 id="portal-title">Band portal</h1>
-        </div>
-        <button id="director-sign-out" class="button secondary" type="button">Sign out</button>
-      </div>
-
-      <div class="portal-grid">
-        <section class="portal-card band-panel">
-          <div class="panel-heading-inline">
-            <div>
-              <p class="eyebrow">Band</p>
-              <h2>Settings</h2>
-            </div>
-          </div>
-          <label>
-            Band
-            <select id="band-select"></select>
-          </label>
-          <label>
-            Band name
-            <input id="band-name">
-          </label>
-          <label>
-            Join code
-            <input id="band-join-code">
-          </label>
-          <button id="save-band-button" class="button primary" type="button">Save band</button>
-          <p id="band-status" class="form-status" role="status" aria-live="polite"></p>
-        </section>
-
-        <section class="portal-card member-panel">
-          <div class="panel-heading-inline">
-            <div>
-              <p class="eyebrow">Members</p>
-              <h2 id="member-count">0 members</h2>
-            </div>
-          </div>
-          <div id="member-list" class="member-list"></div>
-        </section>
-      </div>
-
-      <section class="portal-card upload-panel">
-        <div class="panel-heading-inline">
-          <div>
-            <p class="eyebrow">Private music</p>
-            <h2>Smart upload raw parts.</h2>
-          </div>
-        </div>
-        <div class="portal-form-grid four">
-          <label>
-            Piece title
-            <input id="piece-title" placeholder="Fight Song">
-          </label>
-          <label>
-            Piece ID
-            <input id="piece-id" placeholder="fight_song">
-          </label>
-          <label>
-            Tempo
-            <input id="piece-tempo" inputmode="numeric" placeholder="144">
-          </label>
-          <label>
-            Category
-            <input id="piece-category" placeholder="Pep tune">
-          </label>
-        </div>
-        <label id="director-dropzone" class="file-picker smart">
-          <strong>Drop or choose files</strong>
-          <span>PNG, JPG, PDF, MusicXML, XML, MIDI, and SVG are supported. Review every mapping before upload.</span>
-          <input id="piece-files" type="file" multiple accept=".png,.jpg,.jpeg,.webp,.svg,.pdf,.musicxml,.xml,.mid,.midi">
-        </label>
-        <div id="upload-review" class="upload-review"></div>
-        <div class="portal-actions">
-          <button id="upload-piece-button" class="button primary" type="button" disabled>Upload private piece</button>
-          <p id="upload-status" class="form-status" role="status" aria-live="polite"></p>
-        </div>
-      </section>
-
-      <section class="portal-card">
-        <div class="panel-heading-inline">
-          <div>
-            <p class="eyebrow">Pieces</p>
-            <h2>Band-private library</h2>
-          </div>
-        </div>
-        <div id="piece-list" class="portal-records"></div>
-      </section>
-
-      <section class="portal-card">
-        <div class="panel-heading-inline">
-          <div>
-            <p class="eyebrow">Shorties</p>
-            <h2>Text presets</h2>
-          </div>
-        </div>
-        <div class="portal-form-grid four">
-          <label>
-            Title
-            <input id="shorty-title" placeholder="Tag">
-          </label>
-          <label>
-            Shorty ID
-            <input id="shorty-id" placeholder="tag">
-          </label>
-          <label>
-            Concert key
-            <select id="shorty-key">
-              <option>Bb</option>
-              <option>C</option>
-              <option>Eb</option>
-              <option>F</option>
-              <option>Ab</option>
-              <option>Db</option>
-              <option>G</option>
-              <option>D</option>
-            </select>
-          </label>
-          <label>
-            Notes
-            <input id="shorty-notes" placeholder="Optional">
-          </label>
-        </div>
-        <label>
-          Template text
-          <textarea id="shorty-text" rows="4" placeholder=".1 .2 .3 .rpm"></textarea>
-        </label>
-        <div class="portal-actions">
-          <button id="save-shorty-button" class="button primary" type="button">Save shorty</button>
-          <p id="shorty-status" class="form-status" role="status" aria-live="polite"></p>
-        </div>
-        <div id="shorty-list" class="portal-records"></div>
-      </section>
-    </section>
+      <label>
+        Director email
+        <input id="director-email" type="email" autocomplete="email" required>
+      </label>
+      <button id="send-code-button" class="button primary" type="submit">Send sign-in link</button>
+      <p id="director-auth-status" class="form-status" role="status" aria-live="polite"></p>
+    </form>
   </main>
-
-  <footer class="site-footer">
-    <span>NoteLink</span>
-    <nav aria-label="Footer navigation">
-      <a href="support.html">Support</a>
-      <a href="privacy.html">Privacy</a>
-      <a href="delete.html">Account deletion</a>
-    </nav>
-  </footer>
 
   <script type="module" src="director.js"></script>
 </body>
