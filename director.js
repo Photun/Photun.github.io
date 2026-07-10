@@ -2,7 +2,9 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.1.0/firebas
 import {
   getAuth,
   onAuthStateChanged,
-  signInWithCustomToken,
+  sendSignInLinkToEmail,
+  isSignInWithEmailLink,
+  signInWithEmailLink,
   signOut,
 } from 'https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js';
 import {
@@ -26,11 +28,15 @@ const firebaseConfig = {
   measurementId: 'G-TX5K0ZZZFP',
 };
 
-const functionsBase = 'https://us-central1-band2-d72ec.cloudfunctions.net';
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const functions = getFunctions(app, 'us-central1');
 const storage = getStorage(app);
+const emailStorageKey = 'notelinkDirectorEmail';
+const actionCodeSettings = {
+  url: 'https://photun.github.io/director.html',
+  handleCodeInApp: true,
+};
 
 const instruments = [
   ['flute', 'Flute', ['fl', 'flute']],
@@ -67,10 +73,7 @@ const els = {
   appSection: document.getElementById('director-app'),
   loginForm: document.getElementById('director-login-form'),
   email: document.getElementById('director-email'),
-  code: document.getElementById('director-code'),
-  codeStep: document.getElementById('code-step'),
   sendCode: document.getElementById('send-code-button'),
-  verifyCode: document.getElementById('verify-code-button'),
   authStatus: document.getElementById('director-auth-status'),
   signOut: document.getElementById('director-sign-out'),
   portalTitle: document.getElementById('portal-title'),
@@ -210,6 +213,11 @@ async function refreshLeader() {
   }
   renderDashboard();
   setStatus(els.bandStatus, '');
+}
+
+async function refreshLeaderClaims() {
+  await call('leaderRefreshClaims');
+  await auth.currentUser?.getIdToken(true);
 }
 
 function renderDashboard() {
@@ -543,54 +551,15 @@ els.loginForm.addEventListener('submit', async (event) => {
   const email = els.email.value.trim();
   if (!email) return;
   els.sendCode.disabled = true;
-  setStatus(els.authStatus, 'Sending code...');
+  setStatus(els.authStatus, 'Sending sign-in link...');
   try {
-    const response = await fetch(`${functionsBase}/requestLeaderCode`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email }),
-    });
-    const result = await response.json().catch(() => ({}));
-    if (!response.ok || result.ok !== true) throw new Error(result.error || 'Unable to send code.');
-    els.codeStep.hidden = false;
-    els.code.focus();
-    setStatus(
-      els.authStatus,
-      result.emailSent
-        ? 'Code sent. Check your inbox.'
-        : 'Code created, but email is not configured yet. Contact NoteLink support.',
-      result.emailSent ? 'success' : 'error',
-    );
+    localStorage.setItem(emailStorageKey, email);
+    await sendSignInLinkToEmail(auth, email, actionCodeSettings);
+    setStatus(els.authStatus, 'Sign-in link sent. Open it from this browser to enter.', 'success');
   } catch (error) {
     setStatus(els.authStatus, messageFromError(error), 'error');
   } finally {
     els.sendCode.disabled = false;
-  }
-});
-
-els.verifyCode.addEventListener('click', async () => {
-  els.verifyCode.disabled = true;
-  setStatus(els.authStatus, 'Verifying...');
-  try {
-    const response = await fetch(`${functionsBase}/verifyLeaderCode`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        email: els.email.value.trim(),
-        code: els.code.value.trim(),
-      }),
-    });
-    const result = await response.json().catch(() => ({}));
-    if (!response.ok || result.ok !== true || !result.token) {
-      throw new Error(result.error || 'Unable to verify code.');
-    }
-    await signInWithCustomToken(auth, result.token);
-    await auth.currentUser?.getIdToken(true);
-    setStatus(els.authStatus, 'Signed in.', 'success');
-  } catch (error) {
-    setStatus(els.authStatus, messageFromError(error), 'error');
-  } finally {
-    els.verifyCode.disabled = false;
   }
 });
 
@@ -677,9 +646,35 @@ onAuthStateChanged(auth, async (user) => {
   renderAuth(Boolean(user));
   if (!user) return;
   try {
-    await user.getIdToken(true);
+    await refreshLeaderClaims();
     await refreshLeader();
   } catch (error) {
     setStatus(els.bandStatus, messageFromError(error), 'error');
   }
 });
+
+async function completeEmailLinkSignIn() {
+  if (!isSignInWithEmailLink(auth, window.location.href)) return;
+
+  let email = localStorage.getItem(emailStorageKey) || '';
+  if (!email) {
+    email = window.prompt('Confirm your director email to finish signing in.') || '';
+  }
+  email = email.trim();
+  if (!email) {
+    setStatus(els.authStatus, 'Email is required to finish signing in.', 'error');
+    return;
+  }
+
+  try {
+    setStatus(els.authStatus, 'Finishing sign-in...');
+    await signInWithEmailLink(auth, email, window.location.href);
+    localStorage.removeItem(emailStorageKey);
+    window.history.replaceState({}, document.title, window.location.pathname);
+    setStatus(els.authStatus, 'Signed in.', 'success');
+  } catch (error) {
+    setStatus(els.authStatus, messageFromError(error), 'error');
+  }
+}
+
+completeEmailLinkSignIn();
