@@ -20,10 +20,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const functionsBase = 'https://us-central1-band2-d72ec.cloudfunctions.net';
 const emailStorageKey = 'notelinkDirectorEmail';
-const actionCodeSettings = {
-  url: 'https://photun.github.io/director-portal.html',
-  handleCodeInApp: true,
-};
+const sentAtStorageKey = 'notelinkDirectorEmailSentAt';
 
 const form = document.getElementById('director-login-form');
 const emailInput = document.getElementById('director-email');
@@ -60,9 +57,14 @@ form.addEventListener('submit', async (event) => {
   setStatus('Checking director access...');
   try {
     await checkLeaderEmail(email);
+    const sentAt = Date.now().toString();
     localStorage.setItem(emailStorageKey, email);
+    localStorage.setItem(sentAtStorageKey, sentAt);
     setStatus('Sending sign-in link...');
-    await sendSignInLinkToEmail(auth, email, actionCodeSettings);
+    await sendSignInLinkToEmail(auth, email, {
+      url: `https://photun.github.io/director-portal.html?sentAt=${encodeURIComponent(sentAt)}`,
+      handleCodeInApp: true,
+    });
     setStatus('Sign-in link sent. Check your inbox and spam folder, then open the link from this browser.', 'success');
   } catch (error) {
     setStatus(messageFromError(error), 'error');

@@ -32,6 +32,8 @@ const auth = getAuth(app);
 const functions = getFunctions(app, 'us-central1');
 const storage = getStorage(app);
 const emailStorageKey = 'notelinkDirectorEmail';
+const sentAtStorageKey = 'notelinkDirectorEmailSentAt';
+const signInLinkMaxAgeMs = 30 * 60 * 1000;
 
 const instruments = [
   ['flute', 'Flute', ['fl', 'flute']],
@@ -82,6 +84,7 @@ const els = {
   pieceId: document.getElementById('piece-id'),
   pieceTempo: document.getElementById('piece-tempo'),
   pieceCategory: document.getElementById('piece-category'),
+  pieceRights: document.getElementById('piece-rights'),
   dropzone: document.getElementById('director-dropzone'),
   files: document.getElementById('piece-files'),
   uploadReview: document.getElementById('upload-review'),
@@ -344,6 +347,7 @@ function uploadProblems() {
   if (!els.pieceTempo.value.trim()) return ['Tempo is required.'];
   if (!Number.isFinite(tempo) || tempo < 20 || tempo > 320) return ['Tempo must be between 20 and 320.'];
   if (state.rows.length === 0) return ['Add files first.'];
+  if (!els.pieceRights.checked) return ['Confirm this band has rights to use these files.'];
   if (state.rows.some((row) => row.instruments.length === 0)) return ['Every file needs at least one instrument.'];
   if (duplicates.length) return [`Duplicate mapping: ${duplicates[0]}.`];
   return [];
@@ -413,6 +417,7 @@ async function uploadPiece() {
       tempo: Number(els.pieceTempo.value),
       category: els.pieceCategory.value.trim(),
       sourceType: sourceTypeForRows(state.rows),
+      rightsConfirmed: true,
       parts,
     });
 
@@ -422,6 +427,7 @@ async function uploadPiece() {
     els.pieceId.value = '';
     els.pieceTempo.value = '';
     els.pieceCategory.value = '';
+    els.pieceRights.checked = false;
     renderRows();
     await refreshLeader();
     setStatus(els.uploadStatus, 'Piece uploaded.', 'success');
@@ -542,6 +548,7 @@ function messageFromError(error) {
 els.signOut.addEventListener('click', async () => {
   els.signOut.disabled = true;
   localStorage.removeItem(emailStorageKey);
+  localStorage.removeItem(sentAtStorageKey);
   await signOut(auth);
   window.location.href = 'director.html';
 });
@@ -565,6 +572,7 @@ els.pieceId.addEventListener('input', () => {
   renderRows();
 });
 els.pieceTempo.addEventListener('input', renderRows);
+els.pieceRights.addEventListener('change', renderRows);
 els.uploadPiece.addEventListener('click', uploadPiece);
 els.saveShorty.addEventListener('click', saveShorty);
 els.shortyTitle.addEventListener('input', () => {
@@ -627,6 +635,17 @@ async function completeEmailLinkSignIn() {
   if (!isSignInWithEmailLink(auth, window.location.href)) return false;
 
   let email = localStorage.getItem(emailStorageKey) || '';
+  const urlSentAt = new URL(window.location.href).searchParams.get('sentAt') || '';
+  const storedSentAt = localStorage.getItem(sentAtStorageKey) || '';
+  const sentAt = Number(urlSentAt || storedSentAt);
+  if (!Number.isFinite(sentAt) || Date.now() - sentAt > signInLinkMaxAgeMs) {
+    localStorage.removeItem(emailStorageKey);
+    localStorage.removeItem(sentAtStorageKey);
+    setStatus(els.loadingStatus, 'That sign-in link expired. Request a fresh link.', 'error');
+    window.history.replaceState({}, document.title, window.location.pathname);
+    return false;
+  }
+
   if (!email) {
     email = window.prompt('Confirm your director email to finish signing in.') || '';
   }
@@ -640,6 +659,7 @@ async function completeEmailLinkSignIn() {
     setStatus(els.loadingStatus, 'Finishing sign-in...');
     await signInWithEmailLink(auth, email, window.location.href);
     localStorage.removeItem(emailStorageKey);
+    localStorage.removeItem(sentAtStorageKey);
     window.history.replaceState({}, document.title, window.location.pathname);
     return true;
   } catch (error) {
