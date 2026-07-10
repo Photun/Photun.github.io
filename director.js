@@ -32,6 +32,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const functions = getFunctions(app, 'us-central1');
 const storage = getStorage(app);
+const functionsBase = 'https://us-central1-band2-d72ec.cloudfunctions.net';
 const emailStorageKey = 'notelinkDirectorEmail';
 const actionCodeSettings = {
   url: 'https://photun.github.io/director.html',
@@ -546,6 +547,18 @@ function messageFromError(error) {
   return error?.message || String(error) || 'Something went wrong.';
 }
 
+async function checkLeaderEmail(email) {
+  const response = await fetch(`${functionsBase}/checkLeaderEmail`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email }),
+  });
+  const result = await response.json().catch(() => ({}));
+  if (!response.ok || result.ok !== true) {
+    throw new Error(result.error || 'No NoteLink band is registered to that email yet.');
+  }
+}
+
 els.loginForm.addEventListener('submit', async (event) => {
   event.preventDefault();
   const email = els.email.value.trim();
@@ -553,6 +566,7 @@ els.loginForm.addEventListener('submit', async (event) => {
   els.sendCode.disabled = true;
   setStatus(els.authStatus, 'Sending sign-in link...');
   try {
+    await checkLeaderEmail(email);
     localStorage.setItem(emailStorageKey, email);
     await sendSignInLinkToEmail(auth, email, actionCodeSettings);
     setStatus(els.authStatus, 'Sign-in link sent. Open it from this browser to enter.', 'success');
