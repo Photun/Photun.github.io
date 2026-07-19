@@ -27,144 +27,173 @@
       <p id="portal-loading-status" class="form-status" role="status" aria-live="polite"></p>
     </section>
 
-    <section id="portal-content" class="portal-content" hidden>
-      <div class="portal-hero-row">
-        <div>
+    <section id="portal-content" class="portal-content director-workspace" hidden>
+      <aside class="director-sidebar" aria-label="Director portal navigation">
+        <div class="director-sidebar-title">
           <p class="eyebrow">Band workspace</p>
           <h1 id="portal-title">Band portal</h1>
         </div>
+        <nav class="director-tabs" aria-label="Director sections">
+          <button class="director-tab is-active" data-tab="overview" type="button">Overview</button>
+          <button class="director-tab" data-tab="band" type="button">Band</button>
+          <button class="director-tab" data-tab="members" type="button">Members</button>
+          <button class="director-tab" data-tab="upload" type="button">Upload</button>
+          <button class="director-tab" data-tab="pieces" type="button">Pieces</button>
+          <button class="director-tab" data-tab="shorties" type="button">Shorties</button>
+        </nav>
         <label class="portal-band-switcher">
           Band
           <select id="band-select"></select>
         </label>
-      </div>
+      </aside>
 
-      <div class="portal-grid">
-        <section class="portal-card band-panel">
-          <div class="panel-heading-inline">
-            <div>
-              <p class="eyebrow">Band</p>
-              <h2>Settings</h2>
-            </div>
+      <div class="director-main">
+        <section class="director-tab-panel is-active" data-panel="overview">
+          <div class="portal-section-heading">
+            <p class="eyebrow">Overview</p>
+            <h2>Your band at a glance</h2>
           </div>
-          <label>
-            Band name
-            <input id="band-name">
-          </label>
-          <label>
-            Join code
-            <input id="band-join-code">
-          </label>
-          <button id="save-band-button" class="button primary" type="button">Save band</button>
-          <p id="band-status" class="form-status" role="status" aria-live="polite"></p>
+          <div class="portal-summary-grid">
+            <article class="portal-card summary-card">
+              <p class="eyebrow">Workflow</p>
+              <h2>Private library</h2>
+              <p class="muted">Upload music and shorties for only this band. The mobile app automatically uses this band's library when members join.</p>
+            </article>
+            <article class="portal-card summary-card">
+              <p class="eyebrow">Next step</p>
+              <h2>Manage by tab</h2>
+              <p class="muted">Use the sidebar to edit band settings, review members, upload private pieces, and maintain shorty presets.</p>
+            </article>
+          </div>
         </section>
 
-        <section class="portal-card member-panel">
-          <div class="panel-heading-inline">
-            <div>
-              <p class="eyebrow">Members</p>
-              <h2 id="member-count">0 members</h2>
-            </div>
+        <section class="director-tab-panel" data-panel="band" hidden>
+          <div class="portal-section-heading">
+            <p class="eyebrow">Band</p>
+            <h2>Settings</h2>
           </div>
-          <div id="member-list" class="member-list"></div>
+          <section class="portal-card band-panel">
+            <label>
+              Band name
+              <input id="band-name">
+            </label>
+            <label>
+              Join code
+              <input id="band-join-code">
+            </label>
+            <div class="portal-actions">
+              <button id="save-band-button" class="button primary" type="button">Save band</button>
+              <p id="band-status" class="form-status" role="status" aria-live="polite"></p>
+            </div>
+          </section>
         </section>
-      </div>
 
-      <section class="portal-card upload-panel">
-        <div class="panel-heading-inline">
-          <div>
+        <section class="director-tab-panel" data-panel="members" hidden>
+          <div class="portal-section-heading">
+            <p class="eyebrow">Members</p>
+            <h2 id="member-count">0 members</h2>
+          </div>
+          <section class="portal-card member-panel">
+            <div id="member-list" class="member-list"></div>
+          </section>
+        </section>
+
+        <section class="director-tab-panel" data-panel="upload" hidden>
+          <div class="portal-section-heading">
             <p class="eyebrow">Private music</p>
-            <h2>Smart upload raw parts.</h2>
+            <h2>Smart upload raw parts</h2>
           </div>
-        </div>
-        <div class="portal-form-grid four">
-          <label>
-            Piece title
-            <input id="piece-title" placeholder="Fight Song">
-          </label>
-          <label>
-            Piece ID
-            <input id="piece-id" placeholder="fight_song">
-          </label>
-          <label>
-            Tempo
-            <input id="piece-tempo" inputmode="numeric" placeholder="144">
-          </label>
-          <label>
-            Category
-            <input id="piece-category" placeholder="Pep tune">
-          </label>
-        </div>
-        <label id="director-dropzone" class="file-picker smart">
-          <strong>Drop or choose files</strong>
-          <span>PNG, JPG, PDF, MusicXML, XML, MIDI, and SVG are supported. Review every mapping before upload.</span>
-          <input id="piece-files" type="file" multiple accept=".png,.jpg,.jpeg,.webp,.svg,.pdf,.musicxml,.xml,.mid,.midi">
-        </label>
-        <label class="rights-check">
-          <input id="piece-rights" type="checkbox">
-          <span>I confirm this band has the rights or permission to use and upload these music files.</span>
-        </label>
-        <div id="upload-review" class="upload-review"></div>
-        <div class="portal-actions">
-          <button id="upload-piece-button" class="button primary" type="button" disabled>Upload private piece</button>
-          <p id="upload-status" class="form-status" role="status" aria-live="polite"></p>
-        </div>
-      </section>
+          <section class="portal-card upload-panel">
+            <div class="portal-form-grid four">
+              <label>
+                Piece title
+                <input id="piece-title" placeholder="Fight Song">
+              </label>
+              <label>
+                Piece ID
+                <input id="piece-id" placeholder="fight_song">
+              </label>
+              <label>
+                Tempo
+                <input id="piece-tempo" inputmode="numeric" placeholder="144">
+              </label>
+              <label>
+                Category
+                <input id="piece-category" placeholder="Pep tune">
+              </label>
+            </div>
+            <label id="director-dropzone" class="file-picker smart">
+              <strong>Drop or choose files</strong>
+              <span>PNG, JPG, PDF, MusicXML, XML, MIDI, and SVG are supported. Review every mapping before upload.</span>
+              <input id="piece-files" type="file" multiple accept=".png,.jpg,.jpeg,.webp,.svg,.pdf,.musicxml,.xml,.mid,.midi">
+            </label>
+            <label class="rights-check">
+              <input id="piece-rights" type="checkbox">
+              <span>I confirm this band has the rights or permission to use and upload these music files.</span>
+            </label>
+            <div id="upload-review" class="upload-review"></div>
+            <div class="portal-actions">
+              <button id="upload-piece-button" class="button primary" type="button" disabled>Upload private piece</button>
+              <p id="upload-status" class="form-status" role="status" aria-live="polite"></p>
+            </div>
+          </section>
+        </section>
 
-      <section class="portal-card">
-        <div class="panel-heading-inline">
-          <div>
+        <section class="director-tab-panel" data-panel="pieces" hidden>
+          <div class="portal-section-heading">
             <p class="eyebrow">Pieces</p>
             <h2>Band-private library</h2>
           </div>
-        </div>
-        <div id="piece-list" class="portal-records"></div>
-      </section>
+          <section class="portal-card">
+            <div id="piece-list" class="portal-records"></div>
+          </section>
+        </section>
 
-      <section class="portal-card">
-        <div class="panel-heading-inline">
-          <div>
+        <section class="director-tab-panel" data-panel="shorties" hidden>
+          <div class="portal-section-heading">
             <p class="eyebrow">Shorties</p>
             <h2>Text presets</h2>
           </div>
-        </div>
-        <div class="portal-form-grid four">
-          <label>
-            Title
-            <input id="shorty-title" placeholder="Tag">
-          </label>
-          <label>
-            Shorty ID
-            <input id="shorty-id" placeholder="tag">
-          </label>
-          <label>
-            Concert key
-            <select id="shorty-key">
-              <option>Bb</option>
-              <option>C</option>
-              <option>Eb</option>
-              <option>F</option>
-              <option>Ab</option>
-              <option>Db</option>
-              <option>G</option>
-              <option>D</option>
-            </select>
-          </label>
-          <label>
-            Notes
-            <input id="shorty-notes" placeholder="Optional">
-          </label>
-        </div>
-        <label>
-          Template text
-          <textarea id="shorty-text" rows="4" placeholder=".1 .2 .3 .rpm"></textarea>
-        </label>
-        <div class="portal-actions">
-          <button id="save-shorty-button" class="button primary" type="button">Save shorty</button>
-          <p id="shorty-status" class="form-status" role="status" aria-live="polite"></p>
-        </div>
-        <div id="shorty-list" class="portal-records"></div>
-      </section>
+          <section class="portal-card">
+            <div class="portal-form-grid four">
+              <label>
+                Title
+                <input id="shorty-title" placeholder="Tag">
+              </label>
+              <label>
+                Shorty ID
+                <input id="shorty-id" placeholder="tag">
+              </label>
+              <label>
+                Concert key
+                <select id="shorty-key">
+                  <option>Bb</option>
+                  <option>C</option>
+                  <option>Eb</option>
+                  <option>F</option>
+                  <option>Ab</option>
+                  <option>Db</option>
+                  <option>G</option>
+                  <option>D</option>
+                </select>
+              </label>
+              <label>
+                Notes
+                <input id="shorty-notes" placeholder="Optional">
+              </label>
+            </div>
+            <label>
+              Template text
+              <textarea id="shorty-text" rows="4" placeholder=".1 .2 .3 .rpm"></textarea>
+            </label>
+            <div class="portal-actions">
+              <button id="save-shorty-button" class="button primary" type="button">Save shorty</button>
+              <p id="shorty-status" class="form-status" role="status" aria-live="polite"></p>
+            </div>
+            <div id="shorty-list" class="portal-records"></div>
+          </section>
+        </section>
+      </div>
     </section>
   </main>
 

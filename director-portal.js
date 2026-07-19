@@ -70,6 +70,8 @@ const els = {
   loading: document.getElementById('portal-loading'),
   loadingStatus: document.getElementById('portal-loading-status'),
   content: document.getElementById('portal-content'),
+  tabs: Array.from(document.querySelectorAll('[data-tab]')),
+  panels: Array.from(document.querySelectorAll('[data-panel]')),
   portalEmail: document.getElementById('portal-email'),
   signOut: document.getElementById('director-sign-out'),
   portalTitle: document.getElementById('portal-title'),
@@ -102,6 +104,20 @@ const els = {
 };
 
 const call = (name, data = {}) => httpsCallable(functions, name)(data).then((result) => result.data);
+
+function setActiveTab(tabId) {
+  const nextTab = els.tabs.some((tab) => tab.dataset.tab === tabId) ? tabId : 'overview';
+  els.tabs.forEach((tab) => {
+    const active = tab.dataset.tab === nextTab;
+    tab.classList.toggle('is-active', active);
+    tab.setAttribute('aria-selected', active ? 'true' : 'false');
+  });
+  els.panels.forEach((panel) => {
+    const active = panel.dataset.panel === nextTab;
+    panel.classList.toggle('is-active', active);
+    panel.hidden = !active;
+  });
+}
 
 function setStatus(el, message, kind = 'neutral') {
   if (!el) return;
@@ -442,6 +458,7 @@ function fillPieceEditor(pieceId) {
   const band = selectedBand();
   const piece = band?.pieces?.[pieceId];
   if (!piece) return;
+  setActiveTab('upload');
   els.pieceTitle.value = piece.title || pieceId;
   els.pieceId.value = pieceId;
   els.pieceTempo.value = piece.tempo || '';
@@ -513,6 +530,7 @@ function fillShortyEditor(shortyId) {
   const band = selectedBand();
   const shorty = band?.shorties?.[shortyId];
   if (!shorty) return;
+  setActiveTab('shorties');
   els.shortyTitle.value = shorty.title || shortyId;
   els.shortyId.value = shortyId;
   els.shortyKey.value = concertKeys.includes(shorty.concertKey) ? shorty.concertKey : 'Bb';
@@ -551,6 +569,9 @@ els.signOut.addEventListener('click', async () => {
   localStorage.removeItem(sentAtStorageKey);
   await signOut(auth);
   window.location.href = 'director.html';
+});
+els.tabs.forEach((tab) => {
+  tab.addEventListener('click', () => setActiveTab(tab.dataset.tab));
 });
 els.bandSelect.addEventListener('change', () => {
   state.selectedBandId = els.bandSelect.value;
