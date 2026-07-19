@@ -120,7 +120,7 @@ async function endDirectorSession() {
   sessionStorage.removeItem(pageClosedKey);
   if (inactivityTimer) window.clearTimeout(inactivityTimer);
   await signOut(auth);
-  window.location.href = 'director.html';
+  window.location.replace('director.html');
 }
 
 function scheduleInactivitySignOut() {
@@ -155,11 +155,23 @@ function markPageClosed() {
   sessionStorage.setItem(pageClosedKey, Date.now().toString());
 }
 
+function pageWasClosed() {
+  return Boolean(sessionStorage.getItem(pageClosedKey));
+}
+
+async function endIfRestoredAfterClose() {
+  if (pageWasClosed()) {
+    await endDirectorSession();
+  }
+}
+
 function installActivityListeners() {
   ['click', 'keydown', 'pointerdown', 'input', 'change', 'scroll'].forEach((eventName) => {
     window.addEventListener(eventName, markDirectorActivity, { passive: true });
   });
   window.addEventListener('pagehide', markPageClosed);
+  window.addEventListener('beforeunload', markPageClosed);
+  window.addEventListener('pageshow', endIfRestoredAfterClose);
 }
 
 function setActiveTab(tabId) {
@@ -757,7 +769,7 @@ async function initPortal() {
     }
 
     await setPersistence(auth, browserSessionPersistence);
-    if (sessionStorage.getItem(pageClosedKey) || !sessionStorage.getItem(sessionStartedKey)) {
+    if (pageWasClosed() || !sessionStorage.getItem(sessionStartedKey)) {
       await endDirectorSession();
       return;
     }
