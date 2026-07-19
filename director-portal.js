@@ -1,8 +1,10 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js';
 import {
+  browserSessionPersistence,
   getAuth,
   onAuthStateChanged,
   isSignInWithEmailLink,
+  setPersistence,
   signInWithEmailLink,
   signOut,
 } from 'https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js';
@@ -33,7 +35,11 @@ const functions = getFunctions(app, 'us-central1');
 const storage = getStorage(app);
 const emailStorageKey = 'notelinkDirectorEmail';
 const sentAtStorageKey = 'notelinkDirectorEmailSentAt';
+const sessionStartedKey = 'notelinkDirectorSessionStartedAt';
+const lastActivityKey = 'notelinkDirectorLastActivityAt';
 const signInLinkMaxAgeMs = 30 * 60 * 1000;
+const inactivityTimeoutMs = 20 * 60 * 1000;
+let inactivityTimer = null;
 
 const instruments = [
   ['flute', 'Flute', ['fl', 'flute']],
@@ -104,6 +110,49 @@ const els = {
 };
 
 const call = (name, data = {}) => httpsCallable(functions, name)(data).then((result) => result.data);
+
+async function endDirectorSession() {
+  localStorage.removeItem(emailStorageKey);
+  localStorage.removeItem(sentAtStorageKey);
+  sessionStorage.removeItem(sessionStartedKey);
+  sessionStorage.removeItem(lastActivityKey);
+  if (inactivityTimer) window.clearTimeout(inactivityTimer);
+  await signOut(auth);
+  window.location.href = 'director.html';
+}
+
+function scheduleInactivitySignOut() {
+  if (inactivityTimer) window.clearTimeout(inactivityTimer);
+
+  const lastActivity = Number(sessionStorage.getItem(lastActivityKey) || sessionStorage.getItem(sessionStartedKey) || 0);
+  const remainingMs = lastActivity + inactivityTimeoutMs - Date.now();
+  if (remainingMs <= 0) {
+    endDirectorSession();
+    return;
+  }
+
+  inactivityTimer = window.setTimeout(() => {
+    endDirectorSession();
+  }, remainingMs);
+}
+
+function markDirectorActivity() {
+  sessionStorage.setItem(lastActivityKey, Date.now().toString());
+  scheduleInactivitySignOut();
+}
+
+function startDirectorSession() {
+  const now = Date.now().toString();
+  sessionStorage.setItem(sessionStartedKey, now);
+  sessionStorage.setItem(lastActivityKey, now);
+  scheduleInactivitySignOut();
+}
+
+function installActivityListeners() {
+  ['click', 'keydown', 'pointerdown', 'input', 'change', 'scroll'].forEach((eventName) => {
+    window.addEventListener(eventName, markDirectorActivity, { passive: true });
+  });
+}
 
 function setActiveTab(tabId) {
   const nextTab = els.tabs.some((tab) => tab.dataset.tab === tabId) ? tabId : 'overview';
@@ -565,10 +614,7 @@ function messageFromError(error) {
 
 els.signOut.addEventListener('click', async () => {
   els.signOut.disabled = true;
-  localStorage.removeItem(emailStorageKey);
-  localStorage.removeItem(sentAtStorageKey);
-  await signOut(auth);
-  window.location.href = 'director.html';
+  await endDirectorSession();
 });
 els.tabs.forEach((tab) => {
   tab.addEventListener('click', () => setActiveTab(tab.dataset.tab));
@@ -678,7 +724,9 @@ async function completeEmailLinkSignIn() {
 
   try {
     setStatus(els.loadingStatus, 'Finishing sign-in...');
+    await setPersistence(auth, browserSessionPersistence);
     await signInWithEmailLink(auth, email, window.location.href);
+    startDirectorSession();
     localStorage.removeItem(emailStorageKey);
     localStorage.removeItem(sentAtStorageKey);
     window.history.replaceState({}, document.title, window.location.pathname);
@@ -690,7 +738,9 @@ async function completeEmailLinkSignIn() {
 }
 
 async function initPortal() {
+  await setPersistence(auth, browserSessionPersistence);
   await completeEmailLinkSignIn();
+  installActivityListeners();
 
   onAuthStateChanged(auth, async (user) => {
     if (!user) {
@@ -698,7 +748,14 @@ async function initPortal() {
       return;
     }
 
+    await setPersistence(auth, browserSessionPersistence);
+    if (!sessionStorage.getItem(sessionStartedKey)) {
+      await endDirectorSession();
+      return;
+    }
+
     try {
+      scheduleInactivitySignOut();
       setStatus(els.loadingStatus, 'Verifying director access...');
       await refreshLeaderClaims();
       await refreshLeader();

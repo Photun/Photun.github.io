@@ -1,8 +1,11 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js';
 import {
+  browserSessionPersistence,
   getAuth,
   onAuthStateChanged,
   sendSignInLinkToEmail,
+  setPersistence,
+  signOut,
 } from 'https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js';
 
 const firebaseConfig = {
@@ -21,6 +24,7 @@ const auth = getAuth(app);
 const functionsBase = 'https://us-central1-band2-d72ec.cloudfunctions.net';
 const emailStorageKey = 'notelinkDirectorEmail';
 const sentAtStorageKey = 'notelinkDirectorEmailSentAt';
+const sessionStartedKey = 'notelinkDirectorSessionStartedAt';
 
 const form = document.getElementById('director-login-form');
 const emailInput = document.getElementById('director-email');
@@ -56,6 +60,7 @@ form.addEventListener('submit', async (event) => {
   submitButton.disabled = true;
   setStatus('Checking director access...');
   try {
+    await setPersistence(auth, browserSessionPersistence);
     await checkLeaderEmail(email);
     const sentAt = Date.now().toString();
     localStorage.setItem(emailStorageKey, email);
@@ -75,6 +80,10 @@ form.addEventListener('submit', async (event) => {
 
 onAuthStateChanged(auth, (user) => {
   if (user) {
+    if (!sessionStorage.getItem(sessionStartedKey)) {
+      signOut(auth);
+      return;
+    }
     window.location.href = 'director-portal.html';
   }
 });
