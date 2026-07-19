@@ -37,6 +37,7 @@ const emailStorageKey = 'notelinkDirectorEmail';
 const sentAtStorageKey = 'notelinkDirectorEmailSentAt';
 const sessionStartedKey = 'notelinkDirectorSessionStartedAt';
 const lastActivityKey = 'notelinkDirectorLastActivityAt';
+const pageClosedKey = 'notelinkDirectorPageClosedAt';
 const signInLinkMaxAgeMs = 30 * 60 * 1000;
 const inactivityTimeoutMs = 20 * 60 * 1000;
 let inactivityTimer = null;
@@ -116,6 +117,7 @@ async function endDirectorSession() {
   localStorage.removeItem(sentAtStorageKey);
   sessionStorage.removeItem(sessionStartedKey);
   sessionStorage.removeItem(lastActivityKey);
+  sessionStorage.removeItem(pageClosedKey);
   if (inactivityTimer) window.clearTimeout(inactivityTimer);
   await signOut(auth);
   window.location.href = 'director.html';
@@ -143,15 +145,21 @@ function markDirectorActivity() {
 
 function startDirectorSession() {
   const now = Date.now().toString();
+  sessionStorage.removeItem(pageClosedKey);
   sessionStorage.setItem(sessionStartedKey, now);
   sessionStorage.setItem(lastActivityKey, now);
   scheduleInactivitySignOut();
+}
+
+function markPageClosed() {
+  sessionStorage.setItem(pageClosedKey, Date.now().toString());
 }
 
 function installActivityListeners() {
   ['click', 'keydown', 'pointerdown', 'input', 'change', 'scroll'].forEach((eventName) => {
     window.addEventListener(eventName, markDirectorActivity, { passive: true });
   });
+  window.addEventListener('pagehide', markPageClosed);
 }
 
 function setActiveTab(tabId) {
@@ -749,7 +757,7 @@ async function initPortal() {
     }
 
     await setPersistence(auth, browserSessionPersistence);
-    if (!sessionStorage.getItem(sessionStartedKey)) {
+    if (sessionStorage.getItem(pageClosedKey) || !sessionStorage.getItem(sessionStartedKey)) {
       await endDirectorSession();
       return;
     }
