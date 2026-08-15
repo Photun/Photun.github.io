@@ -1,12 +1,28 @@
 const form = document.getElementById('band-request-form');
 const statusEl = document.getElementById('request-status');
+const statusAutoDismissMs = 2000;
+let statusDismissTimer = null;
+let statusClearTimer = null;
 
 const endpoint = 'https://us-central1-band2-d72ec.cloudfunctions.net/submitBandRequest';
 
 function setStatus(message, kind = 'neutral') {
   if (!statusEl) return;
+  if (statusDismissTimer) window.clearTimeout(statusDismissTimer);
+  if (statusClearTimer) window.clearTimeout(statusClearTimer);
+  statusEl.classList.remove('is-clearing');
   statusEl.textContent = message;
   statusEl.dataset.kind = kind;
+  if (!message || kind === 'neutral') return;
+
+  statusDismissTimer = window.setTimeout(() => {
+    statusEl.classList.add('is-clearing');
+  }, Math.max(0, statusAutoDismissMs - 220));
+  statusClearTimer = window.setTimeout(() => {
+    statusEl.textContent = '';
+    statusEl.dataset.kind = 'neutral';
+    statusEl.classList.remove('is-clearing');
+  }, statusAutoDismissMs);
 }
 
 if (form) {

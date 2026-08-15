@@ -30,10 +30,26 @@ const form = document.getElementById('director-login-form');
 const emailInput = document.getElementById('director-email');
 const submitButton = document.getElementById('send-code-button');
 const status = document.getElementById('director-auth-status');
+const statusAutoDismissMs = 2000;
+let statusDismissTimer = null;
+let statusClearTimer = null;
 
 function setStatus(message, kind = 'neutral') {
+  if (statusDismissTimer) window.clearTimeout(statusDismissTimer);
+  if (statusClearTimer) window.clearTimeout(statusClearTimer);
+  status.classList.remove('is-clearing');
   status.textContent = message;
   status.dataset.kind = kind;
+  if (!message || kind === 'neutral') return;
+
+  statusDismissTimer = window.setTimeout(() => {
+    status.classList.add('is-clearing');
+  }, Math.max(0, statusAutoDismissMs - 220));
+  statusClearTimer = window.setTimeout(() => {
+    status.textContent = '';
+    status.dataset.kind = 'neutral';
+    status.classList.remove('is-clearing');
+  }, statusAutoDismissMs);
 }
 
 function messageFromError(error) {

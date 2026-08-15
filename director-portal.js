@@ -40,7 +40,9 @@ const lastActivityKey = 'notelinkDirectorLastActivityAt';
 const pageClosedKey = 'notelinkDirectorPageClosedAt';
 const signInLinkMaxAgeMs = 30 * 60 * 1000;
 const inactivityTimeoutMs = 20 * 60 * 1000;
+const statusAutoDismissMs = 2000;
 let inactivityTimer = null;
+const statusTimers = new WeakMap();
 
 const instruments = [
   ['flute', 'Flute', ['fl', 'flute']],
@@ -188,10 +190,32 @@ function setActiveTab(tabId) {
   });
 }
 
-function setStatus(el, message, kind = 'neutral') {
+function setStatus(el, message, kind = 'neutral', options = {}) {
   if (!el) return;
+  const existingTimer = statusTimers.get(el);
+  if (existingTimer) {
+    window.clearTimeout(existingTimer.dismiss);
+    window.clearTimeout(existingTimer.clear);
+    statusTimers.delete(el);
+  }
+  el.classList.remove('is-clearing');
   el.textContent = message;
   el.dataset.kind = kind;
+
+  const autoDismiss = options.autoDismiss ?? (kind === 'success' || kind === 'error');
+  if (!message || !autoDismiss) return;
+
+  const dismiss = window.setTimeout(() => {
+    el.classList.add('is-clearing');
+  }, Math.max(0, statusAutoDismissMs - 220));
+  const clear = window.setTimeout(() => {
+    el.textContent = '';
+    el.dataset.kind = 'neutral';
+    el.classList.remove('is-clearing');
+    statusTimers.delete(el);
+  }, statusAutoDismissMs);
+
+  statusTimers.set(el, { dismiss, clear });
 }
 
 function selectedBand() {
@@ -205,6 +229,15 @@ function slugify(value) {
     .replace(/['"]/g, '')
     .replace(/[^a-z0-9]+/g, '_')
     .replace(/^_+|_+$/g, '')
+    .slice(0, 64);
+}
+
+function editableSlug(value) {
+  return String(value || '')
+    .toLowerCase()
+    .replace(/['"]/g, '')
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/^_+/, '')
     .slice(0, 64);
 }
 
@@ -420,15 +453,22 @@ function renderRows() {
 
   const problems = uploadProblems();
   els.uploadPiece.disabled = problems.length > 0;
-  setStatus(els.uploadStatus, problems[0] || 'Ready to upload.', problems.length ? 'error' : 'success');
+  setStatus(
+    els.uploadStatus,
+    problems[0] || 'Ready to upload.',
+    problems.length ? 'error' : 'success',
+    { autoDismiss: false },
+  );
 }
 
 function uploadProblems() {
+  const rawPieceId = els.pieceId.value.trim();
   const pieceId = slugify(els.pieceId.value || els.pieceTitle.value);
   const tempo = Number(els.pieceTempo.value);
   const duplicates = duplicateMappings(state.rows);
   if (!selectedBand()) return ['Choose a band first.'];
   if (!els.pieceTitle.value.trim() || !pieceId) return ['Piece title and ID are required.'];
+  if (rawPieceId && editableSlug(rawPieceId).endsWith('_')) return ['Piece ID cannot end with an underscore.'];
   if (!els.pieceTempo.value.trim()) return ['Tempo is required.'];
   if (!Number.isFinite(tempo) || tempo < 20 || tempo > 320) return ['Tempo must be between 20 and 320.'];
   if (state.rows.length === 0) return ['Add files first.'];
@@ -655,7 +695,7 @@ els.pieceTitle.addEventListener('input', () => {
   renderRows();
 });
 els.pieceId.addEventListener('input', () => {
-  els.pieceId.value = slugify(els.pieceId.value);
+  els.pieceId.value = editableSlug(els.pieceId.value);
   renderRows();
 });
 els.pieceTempo.addEventListener('input', renderRows);
