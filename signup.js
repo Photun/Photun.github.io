@@ -1,6 +1,6 @@
 const form = document.getElementById('band-request-form');
 const statusEl = document.getElementById('request-status');
-const statusAutoDismissMs = 2000;
+const statusAutoDismissMs = 5000;
 let statusDismissTimer = null;
 let statusClearTimer = null;
 

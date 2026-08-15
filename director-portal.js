@@ -40,7 +40,7 @@ const lastActivityKey = 'notelinkDirectorLastActivityAt';
 const pageClosedKey = 'notelinkDirectorPageClosedAt';
 const signInLinkMaxAgeMs = 30 * 60 * 1000;
 const inactivityTimeoutMs = 20 * 60 * 1000;
-const statusAutoDismissMs = 2000;
+const statusAutoDismissMs = 5000;
 let inactivityTimer = null;
 const statusTimers = new WeakMap();
 

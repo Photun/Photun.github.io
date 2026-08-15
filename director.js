@@ -30,7 +30,7 @@ const form = document.getElementById('director-login-form');
 const emailInput = document.getElementById('director-email');
 const submitButton = document.getElementById('send-code-button');
 const status = document.getElementById('director-auth-status');
-const statusAutoDismissMs = 2000;
+const statusAutoDismissMs = 5000;
 let statusDismissTimer = null;
 let statusClearTimer = null;
 
