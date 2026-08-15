@@ -72,6 +72,7 @@ const state = {
   bands: [],
   selectedBandId: '',
   rows: [],
+  editingPieceId: '',
 };
 
 const els = {
@@ -466,9 +467,13 @@ function uploadProblems() {
   const pieceId = slugify(els.pieceId.value || els.pieceTitle.value);
   const tempo = Number(els.pieceTempo.value);
   const duplicates = duplicateMappings(state.rows);
-  if (!selectedBand()) return ['Choose a band first.'];
+  const band = selectedBand();
+  if (!band) return ['Choose a band first.'];
   if (!els.pieceTitle.value.trim() || !pieceId) return ['Piece title and ID are required.'];
   if (rawPieceId && editableSlug(rawPieceId).endsWith('_')) return ['Piece ID cannot end with an underscore.'];
+  if (band.pieces?.[pieceId] && state.editingPieceId !== pieceId) {
+    return [`Piece ID "${pieceId}" already exists in this band. Choose a different ID or edit the existing piece.`];
+  }
   if (!els.pieceTempo.value.trim()) return ['Tempo is required.'];
   if (!Number.isFinite(tempo) || tempo < 20 || tempo > 320) return ['Tempo must be between 20 and 320.'];
   if (state.rows.length === 0) return ['Add files first.'];
@@ -542,6 +547,7 @@ async function uploadPiece() {
       tempo: Number(els.pieceTempo.value),
       category: els.pieceCategory.value.trim(),
       sourceType: sourceTypeForRows(state.rows),
+      overwrite: state.editingPieceId === pieceId,
       rightsConfirmed: true,
       parts,
     });
@@ -553,6 +559,7 @@ async function uploadPiece() {
     els.pieceTempo.value = '';
     els.pieceCategory.value = '';
     els.pieceRights.checked = false;
+    state.editingPieceId = '';
     renderRows();
     await refreshLeader();
     setStatus(els.uploadStatus, 'Piece uploaded.', 'success');
@@ -573,6 +580,7 @@ function fillPieceEditor(pieceId) {
   els.pieceTempo.value = piece.tempo || '';
   els.pieceCategory.value = piece.category || '';
   state.rows = [];
+  state.editingPieceId = pieceId;
   renderRows();
   setStatus(els.uploadStatus, 'Metadata loaded. Choose files to replace the piece, or delete it below.');
 }
@@ -681,6 +689,7 @@ els.tabs.forEach((tab) => {
 });
 els.bandSelect.addEventListener('change', () => {
   state.selectedBandId = els.bandSelect.value;
+  state.editingPieceId = '';
   renderDashboard();
 });
 els.saveBand.addEventListener('click', saveBand);
@@ -695,7 +704,11 @@ els.pieceTitle.addEventListener('input', () => {
   renderRows();
 });
 els.pieceId.addEventListener('input', () => {
-  els.pieceId.value = editableSlug(els.pieceId.value);
+  const nextPieceId = editableSlug(els.pieceId.value);
+  if (state.editingPieceId && nextPieceId !== state.editingPieceId) {
+    state.editingPieceId = '';
+  }
+  els.pieceId.value = nextPieceId;
   renderRows();
 });
 els.pieceTempo.addEventListener('input', renderRows);
