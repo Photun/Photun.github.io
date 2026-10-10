@@ -370,19 +370,22 @@ function renderPieces(band) {
   const pieces = Object.entries(band?.pieces || {})
     .sort(([, a], [, b]) => (a.title || '').localeCompare(b.title || ''));
   els.pieceList.innerHTML = pieces.length
-    ? pieces.map(([pieceId, piece]) => `
+    ? pieces.map(([pieceId, piece]) => {
+      const canEdit = !piece.sourcePieceId || piece.ownerBandId === band.bandId;
+      return `
       <article class="portal-record" data-piece-id="${escapeHtml(pieceId)}">
         <div>
           <h3>${escapeHtml(piece.title || pieceId)}</h3>
           <p>${escapeHtml(pieceId)} - ${piece.tempo ? `${piece.tempo} bpm` : 'No tempo'} - ${countParts(piece)} parts</p>
         </div>
         <div class="record-actions">
-          <button class="button secondary" data-action="edit-piece" type="button">Edit</button>
-          <button class="button danger" data-action="delete-piece" type="button">Delete</button>
+          ${canEdit ? '<button class="button secondary" data-action="edit-piece" type="button">Edit</button>' : ''}
+          <button class="button danger" data-action="delete-piece" type="button">Remove</button>
         </div>
       </article>
-    `).join('')
-    : '<p class="muted">No private pieces uploaded yet.</p>';
+    `;
+    }).join('')
+    : '<p class="muted">No private pieces are available to this band yet.</p>';
 }
 
 function renderShorties(band) {
@@ -588,11 +591,10 @@ function fillPieceEditor(pieceId) {
 async function deletePiece(pieceId) {
   const band = selectedBand();
   if (!band) return;
-  if (!window.confirm(`Delete ${pieceId} and its uploaded files?`)) return;
+  if (!window.confirm(`Remove ${pieceId} from this band? The private source will remain available to the NoteLink administrator.`)) return;
   await call('leaderDeletePiece', {
     bandId: band.bandId,
     pieceId,
-    deleteStorage: true,
   });
   await refreshLeader();
 }
